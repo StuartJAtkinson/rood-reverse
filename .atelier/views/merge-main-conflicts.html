@@ -1,0 +1,44 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>pr-186 ← main: conflicting decompilations</title>
+<style>
+body{font:14px system-ui,sans-serif;margin:2rem;color:#1f2937}
+table{border-collapse:collapse;margin:1rem 0}
+th,td{border:1px solid #d1d5db;padding:.4rem .7rem;text-align:left}
+th{background:#f3f4f6}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+code{background:#f3f4f6;padding:0 .25rem}
+.opt{border:1px solid #d1d5db;border-radius:6px;padding:.6rem 1rem;margin:.6rem 0}
+</style>
+<h1>Merging <code>main</code> into <code>pr-186</code></h1>
+<p>Main's 5 new commits (#222–#225, #228) decompile functions that <code>pr-186</code> (noprompt's
+<code>decomp/verified-functions</code>) had already decompiled on its own, with different struct layouts, types and names.
+The merge was aborted; <code>main</code> is untouched.</p>
+<table>
+<tr><th>File</th><th>Conflict hunks</th><th>main's change</th><th>Nature</th></tr>
+<tr><td>BATTLE.PRG/5BF94.c</td><td class=n>49</td><td class=n>+1022 / −174</td><td>Same functions decompiled twice; different typedefs and externs</td></tr>
+<tr><td>BATTLE.PRG/3A1A0.c</td><td class=n>32</td><td class=n>+704 / −14</td><td>Same functions decompiled twice</td></tr>
+<tr><td>BATTLE.PRG/3A1A0.h</td><td class=n>4</td><td class=n>+46 / −44</td><td>Prototypes/types diverge</td></tr>
+<tr><td>BATTLE.PRG/44F14.c</td><td class=n>5</td><td class=n>+437 / −11</td><td>Same functions decompiled twice</td></tr>
+<tr><td>BATTLE.PRG/44F14.h</td><td class=n>1</td><td class=n>+3 / −2</td><td>Prototype diverges</td></tr>
+<tr><td>BATTLE.PRG/6E644.c</td><td class=n>modify/delete</td><td class=n>+883 / −122</td><td>pr-186 split this unit (8dadaadf): hasm <code>6E644.s</code> + C <code>6F014.c</code>. main added 10 functions to the old file</td></tr>
+<tr><td>EFFECT/PLG045.BIN/110.c</td><td class=n>1</td><td class=n>+3 / −3</td><td>Small</td></tr>
+<tr><td>EFFECT/PLG049.BIN/E0.c</td><td class=n>1</td><td class=n>+2 / −2</td><td>Small</td></tr>
+</table>
+<h2>Retry (2026-10-14): option a doesn't compile</h2>
+<p>Main's non-conflicting changes to shared headers merge in automatically and retype structs this branch uses in other files:</p>
+<table>
+<tr><th>Header</th><th>pr-186 type</th><th>main type</th></tr>
+<tr><td>146C.h / 5BF94.h</td><td><code>func_8006CE70_t</code></td><td><code>SVECTOR</code></td></tr>
+<tr><td>5BF94.h</td><td><code>func_800CF0E8_t</code>, <code>D_800F53B8_t3_2</code></td><td><code>actionEffectRequest</code>, <code>actionEffectTarget</code></td></tr>
+<tr><td>main.h</td><td><code>vs_action_t.flagsE_0..14</code>, <code>int vs_main_statusEffectParams[][4]</code></td><td><code>vs_actionFlags_t flagsE</code>, <code>vs_main_statusEffectParams_t[]</code></td></tr>
+<tr><td>30DB0.h</td><td>(local extern)</td><td><code>D_800F2458_t D_800F2458</code></td></tr>
+</table>
+<p>Errors: <code>30DB0.c</code> (actor <code>unk16C</code>/<code>unk12C</code>/<code>polyOffset</code>), <code>40564.c</code>, <code>44F14.c:113</code> (conflicting types for <code>D_800F2458</code>).
+None of main's 22 changed files decompiles a function pr-186 lacks: every conflict is two versions of the same decompiled code.</p>
+<h2>Options</h2>
+<div class=opt><b>a. Keep pr-186's versions</b> in every conflicting function, take main's non-conflicting additions, port main's
+6E644 changes into <code>6F014.c</code>, then build until <code>✔ All files match</code>. Fastest; drops main's reviewed names/types where they clash.</div>
+<div class=opt><b>b. Prefer main's (upstream-reviewed) versions</b> per function, then rename pr-186's other callers/types to match and
+rebuild until it matches. Slower; keeps the branch aligned with upstream.</div>
+<div class=opt><b>c. Don't merge main into this branch</b>; leave pr-186 as it is.</div>
