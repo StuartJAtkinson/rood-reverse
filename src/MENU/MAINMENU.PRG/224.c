@@ -7,6 +7,8 @@
 #include "src/BATTLE/BATTLE.PRG/4A0A8.h"
 #include "src/BATTLE/BATTLE.PRG/5BF94.h"
 
+void func_800B28A8(void*, MATRIX*, char);
+
 void func_800F9A24(int arg0)
 {
     func_800F9A78(arg0);
@@ -271,7 +273,7 @@ static int func_800FA188(int arg0, int arg1, int* arg2)
             && ((((!var_t0[i]->unk8_0) && (!temp_v1->unk9_0)) && (temp_v1->unk1A == 0))
                 && (temp_v1->unk5C == arg0))
             && (temp_v1->unk5E == arg1)) {
-            if (temp_v1->unk6C[8].unk0_4 == 2) {
+            if (temp_v1->unk16C.unk0_4 == 2) {
                 ret = 1;
             } else {
                 var_t2 -= 0x80;

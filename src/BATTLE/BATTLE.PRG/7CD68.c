@@ -191,9 +191,9 @@ int func_800E5600(int arg0, int actionId, u_int arg2)
     int r = 0;
     int v;
 
-    if (action->flagsE_13 << 0x1D) {
+    if (action->flagsE.unk13 << 0x1D) {
         r = action->aoe_8 << 5;
-    } else if (action->flagsE_3 << 0x17) {
+    } else if (action->flagsE.unk7 << 0x17) {
         v = func_800E5568((func_800E5568_t*)&action->aoe_0);
         if (v < arg2) {
             r = v;
